@@ -12,6 +12,7 @@
         <springboot.version>1.4.0.RELEASE</springboot.version>
         <hibernate.version>5.2.2.Final</hibernate.version>
         <postgres.vesrsion>9.4.1209</postgres.vesrsion>
+        <json.version>20160212</json.version>
     </properties>
 
     <dependencies>
@@ -37,6 +38,12 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
             <version>${hibernate.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>${json.version}</version>
         </dependency>
 
     </dependencies>
