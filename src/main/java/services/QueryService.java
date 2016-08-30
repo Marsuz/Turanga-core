@@ -1,14 +1,15 @@
 package services;
 
 import org.hibernate.Session;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static db.utils.JDBCUtils.*;
 
@@ -21,7 +22,7 @@ public class QueryService {
 
     final static Logger logger = LoggerFactory.getLogger(QueryService.class);
 
-    public List processSelectQuery(String query) {
+    public List<Map<String, String>> processSelectQuery(String query) {
 
         Connection connection= null;
         Statement statement = null;
@@ -60,8 +61,8 @@ public class QueryService {
 
     }
 
-    private List<JSONObject> getFormattedResult(ResultSet rs) {
-        List<JSONObject> resList = new ArrayList<JSONObject>();
+    private List<Map<String, String>> getFormattedResult(ResultSet rs) {
+        List<Map<String, String>> resList = new ArrayList<Map<String, String>>();
         try {
             ResultSetMetaData rsMeta = rs.getMetaData();
             int columnCnt = rsMeta.getColumnCount();
@@ -71,13 +72,11 @@ public class QueryService {
             }
 
             while (rs.next()) { // convert each object to an human readable JSON object
-                JSONObject obj = new JSONObject();
+                Map<String, String> currMap = new HashMap<String, String>();
                 for (int i = 1; i <= columnCnt; i++) {
-                    String key = columnNames.get(i - 1);
-                    String value = rs.getString(i);
-                    obj.put(key, value);
+                    currMap.put(columnNames.get(i - 1), rs.getString(i));
                 }
-                resList.add(obj);
+                resList.add(currMap);
             }
         } catch (Exception e) {
             e.printStackTrace();

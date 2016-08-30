@@ -26,7 +26,7 @@ public class JDBCUtils {
         Properties properties = new Properties();
         FileInputStream input = null;
         try {
-            input = new FileInputStream("db.properties");
+            input = new FileInputStream("src/main/resources/db.properties");
             properties.load(input);
 
             JDBC_DRIVER = properties.getProperty("jdbc_driver");
@@ -34,6 +34,7 @@ public class JDBCUtils {
             user = properties.getProperty("db_user");
             password = properties.getProperty("db_password");
         } catch (IOException ex) {
+            logger.info("Could not read properties file for jdbc initialization");
             System.exit(-1);
         } finally {
             try {
