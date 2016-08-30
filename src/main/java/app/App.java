@@ -1,17 +1,33 @@
 package app;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.orm.jpa.EntityScan;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 /**
  * Created by Marcin on 2016-08-20.
  */
 
 @SpringBootApplication
+@EntityScan(basePackages = { "model" })
+@PropertySource("classpath:application.properties")
 @ComponentScan(basePackages = {"app", "db", "utils", "model", "rest", "services"})
+@EnableAutoConfiguration
 public class App {
-    public static void main(String[] args) {
-        SpringApplication.run(App.class, args);
+
+    @Bean
+    static PropertySourcesPlaceholderConfigurer propertyPlaceHolderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
     }
+
+    public static void main(String[] args) {
+        ConfigurableApplicationContext run = SpringApplication.run(App.class, args);
+    }
+
 }

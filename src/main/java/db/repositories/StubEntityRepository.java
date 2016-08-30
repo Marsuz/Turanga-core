@@ -1,6 +1,6 @@
 package db.repositories;
 
-import model.test.StubEntity;
+import model.stubs.StubEntity;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 

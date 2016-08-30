@@ -1,9 +1,8 @@
 package rest;
 
 import db.repositories.StubEntityRepository;
-import model.test.StubEntity;
+import model.stubs.StubEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ScannedGenericBeanDefinition;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 

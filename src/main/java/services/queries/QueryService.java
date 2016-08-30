@@ -1,6 +1,5 @@
-package services;
+package services.queries;
 
-import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -34,7 +33,7 @@ public class QueryService {
 
             ResultSet resultSet = statement.executeQuery(query);
 
-            return getFormattedResult(resultSet);
+            return convertResultSetToJsonApplicableFormat(resultSet);
 
         } catch (SQLException e) {
 
@@ -61,7 +60,7 @@ public class QueryService {
 
     }
 
-    private List<Map<String, String>> getFormattedResult(ResultSet rs) {
+    private List<Map<String, String>> convertResultSetToJsonApplicableFormat(ResultSet rs) {
         List<Map<String, String>> resList = new ArrayList<Map<String, String>>();
         try {
             ResultSetMetaData rsMeta = rs.getMetaData();

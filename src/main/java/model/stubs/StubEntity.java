@@ -1,4 +1,4 @@
-package model.test;
+package model.stubs;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
