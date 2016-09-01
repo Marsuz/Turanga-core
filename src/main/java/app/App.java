@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
  * Created by Marcin on 2016-08-20.
@@ -18,7 +19,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 @EntityScan(basePackages = { "model" })
 @PropertySource("classpath:application.properties")
 @ComponentScan(basePackages = {"app", "db", "utils", "model", "rest", "services"})
-@EnableAutoConfiguration
+@EnableJpaRepositories(basePackages = {"db/repositories"})
 public class App {
 
     @Bean

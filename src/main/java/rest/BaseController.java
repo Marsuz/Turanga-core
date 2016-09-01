@@ -4,6 +4,7 @@ import db.repositories.StubEntityRepository;
 import model.stubs.StubEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class BaseController {
 
     @RequestMapping(value="/")
     public List<StubEntity> getAllEntities() {
-        return stubEntityRepository.getAllEntities();
+        return (List<StubEntity>) stubEntityRepository.findAll();
     }
 
     @RequestMapping(value="/testSave")
@@ -35,6 +36,6 @@ public class BaseController {
         toSave.add(stub2);
         toSave.add(stub3);
         toSave.add(stub4);
-        stubEntityRepository.saveEntites(toSave);
+        stubEntityRepository.save(toSave);
     }
 }
