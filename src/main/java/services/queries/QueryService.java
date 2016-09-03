@@ -1,5 +1,6 @@
 package services.queries;
 
+import db.utils.JDBCUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -21,25 +22,26 @@ public class QueryService {
 
     final static Logger logger = LoggerFactory.getLogger(QueryService.class);
 
-    public List<Map<String, String>> processSelectQuery(String query) {
+    public List<Map<String, String>> processSelectQuery(String query) throws SQLException {
 
-        Connection connection = null;
+        Connection connection = getDBConnection();
         Statement statement = null;
 
-
         try {
-            connection = getDBConnection();
             statement = connection.createStatement();
-
-            ResultSet resultSet = statement.executeQuery(query);
-
-            return convertResultSetToJsonApplicableFormat(resultSet);
 
         } catch (SQLException e) {
 
-            logger.info("Problem while establishing connection with DB");
+            logger.info("DB connection could not be established");
             return null;
 
+        }
+        try {
+            ResultSet resultSet = statement.executeQuery(query);
+
+            return convertResultSetToJsonApplicableFormat(resultSet);
+        } catch (SQLException e) {
+            throw e;
         } finally {
 
             try {
@@ -52,12 +54,15 @@ public class QueryService {
                 }
             } catch (SQLException e) {
 
-                logger.info("Problem while closing statement/connection!");
+                logger.info("Statement or connection could not be closed");
 
             }
-
         }
+    }
 
+
+    public String buildResultsComparingQuery(String query1, String query2) {
+        return query1 + " EXCEPT ALL " + query2;
     }
 
     private List<Map<String, String>> convertResultSetToJsonApplicableFormat(ResultSet rs) {
@@ -70,7 +75,7 @@ public class QueryService {
                 columnNames.add(rsMeta.getColumnName(i).toUpperCase());
             }
 
-            while (rs.next()) { // convert each object to an human readable JSON object
+            while (rs.next()) { // convert each object to a human readable JSON object
                 Map<String, String> currMap = new HashMap<String, String>();
                 for (int i = 1; i <= columnCnt; i++) {
                     currMap.put(columnNames.get(i - 1), rs.getString(i));

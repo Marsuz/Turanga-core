@@ -1,4 +1,4 @@
-package rest;
+package rest.controllers;
 
 import db.repositories.StubEntityRepository;
 import model.stubs.StubEntity;

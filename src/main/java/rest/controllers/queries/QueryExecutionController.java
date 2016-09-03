@@ -1,4 +1,4 @@
-package rest.queries;
+package rest.controllers.queries;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import services.queries.QueryService;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -20,6 +21,10 @@ public class QueryExecutionController {
 
     @RequestMapping(value="/query", method = RequestMethod.POST)
     public List executeQuery(@RequestParam("query") String query) {
-        return queryService.processSelectQuery(query);
+        try {
+            return queryService.processSelectQuery(query);
+        } catch (SQLException e) {
+            return null;
+        }
     }
 }
