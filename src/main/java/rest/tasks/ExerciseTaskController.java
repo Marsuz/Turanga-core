@@ -1,6 +1,5 @@
 package rest.tasks;
 
-import db.repositories.ExerciseTaskRepository;
 import model.tasks.ExerciseTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,14 +20,20 @@ public class ExerciseTaskController {
     @Autowired
     ExerciseTaskService exerciseTaskService;
 
-    @RequestMapping(value = "/exercises/all", method = RequestMethod.GET)
+    @RequestMapping(value = "/ex", method = RequestMethod.GET)
     public List<ExerciseTask> getAllExerciseTasks() {
-        return exerciseTaskService.getAllExercieTasks();
+        return exerciseTaskService.getAllExerciseTasks();
     }
 
-    @RequestMapping(value = "/exercises/add", method = RequestMethod.POST)
-    public void addExerciseTask(@RequestParam("descripton") String description, @RequestParam("correctQuery") String query, @RequestParam("category") String category) {
+    @RequestMapping(value = "/ex/single", method = RequestMethod.GET)
+    public ExerciseTask getSingleExerciseTask(@RequestParam("id") Long id) {
+        return exerciseTaskService.getExerciseTyskById(id);
+    }
+
+    @RequestMapping(value = "/ex/add", method = RequestMethod.POST)
+    public void addExerciseTask(@RequestParam("description") String description, @RequestParam("correctQuery") String query, @RequestParam("category") String category) {
         exerciseTaskService.saveExerciseTask(new ExerciseTask(description, query, category));
     }
+
 
 }

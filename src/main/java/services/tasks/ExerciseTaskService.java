@@ -18,7 +18,11 @@ public class ExerciseTaskService {
     @Autowired
     private ExerciseTaskRepository exerciseTaskRepository;
 
-    public List<ExerciseTask> getAllExercieTasks() {
+    public ExerciseTask getExerciseTyskById(Long id) {
+        return exerciseTaskRepository.findOne(id);
+    }
+
+    public List<ExerciseTask> getAllExerciseTasks() {
         return (List<ExerciseTask>) exerciseTaskRepository.findAll();
     }
 

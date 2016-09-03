@@ -23,7 +23,7 @@ public class QueryService {
 
     public List<Map<String, String>> processSelectQuery(String query) {
 
-        Connection connection= null;
+        Connection connection = null;
         Statement statement = null;
 
 

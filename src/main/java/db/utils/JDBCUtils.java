@@ -26,7 +26,7 @@ public class JDBCUtils {
         Properties properties = new Properties();
         FileInputStream input = null;
         try {
-            input = new FileInputStream("src/main/resources/db.properties");
+            input = new FileInputStream("src/main/resources/classdb.properties");
             properties.load(input);
 
             JDBC_DRIVER = properties.getProperty("jdbc_driver");
