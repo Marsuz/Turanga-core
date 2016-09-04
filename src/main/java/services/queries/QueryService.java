@@ -1,9 +1,12 @@
 package services.queries;
 
-import db.utils.JDBCUtils;
+import model.tasks.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import rest.wrappers.QueryResult;
+import services.tasks.ExerciseTaskService;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static db.utils.JDBCUtils.*;
+import static db.utils.JDBCUtils.getDBConnection;
 
 /**
  * Created by Marcin on 2016-08-20.
@@ -20,28 +23,39 @@ import static db.utils.JDBCUtils.*;
 @Service
 public class QueryService {
 
-    final static Logger logger = LoggerFactory.getLogger(QueryService.class);
+    private final static Logger logger = LoggerFactory.getLogger(QueryService.class);
 
-    public List<Map<String, String>> processSelectQuery(String query) throws SQLException {
+    @Autowired
+    ExerciseTaskService exerciseTaskService;
 
+    public QueryResult processQuery(String query) {
+        return processQuery(query, null);
+    }
+
+    public QueryResult processQuery(String query, Long taskId) {
         Connection connection = getDBConnection();
         Statement statement = null;
+        List<Map<String, String>> results = null;
 
         try {
             statement = connection.createStatement();
 
         } catch (SQLException e) {
-
             logger.info("DB connection could not be established");
-            return null;
-
+            e.printStackTrace();
         }
+
         try {
             ResultSet resultSet = statement.executeQuery(query);
-
-            return convertResultSetToJsonApplicableFormat(resultSet);
+            results = convertResultSetToJsonApplicableFormat(resultSet);
+            boolean ifCorrect = true;
+            if (taskId != null) {
+                ifCorrect = checkIfQueryOutputMatchesRequirements(query, taskId);
+            }
+            return new QueryResult(ifCorrect, results, "");
         } catch (SQLException e) {
-            throw e;
+            logger.info("Error occured executing query");
+            return new QueryResult(false, results, e.getMessage());
         } finally {
 
             try {
@@ -49,34 +63,38 @@ public class QueryService {
                     statement.close();
                 }
 
-                if (connection != null) {
-                    connection.close();
-                }
+                connection.close();
             } catch (SQLException e) {
 
                 logger.info("Statement or connection could not be closed");
-
+                e.printStackTrace();
             }
         }
     }
 
+    private boolean checkIfQueryOutputMatchesRequirements(String query, Long taskId) {
+        Task chosenTask = exerciseTaskService.getExerciseTyskById(taskId);
+        String checkingQuery = buildResultsComparingQuery(query, chosenTask.getExampleCorrectQuery());
+        QueryResult diff = processQuery(checkingQuery);
+        return "".equals(diff.getErrorMessage()) && diff.getResults().size() == 0;
+    }
 
-    public String buildResultsComparingQuery(String query1, String query2) {
+    private String buildResultsComparingQuery(String query1, String query2) {
         return query1 + " EXCEPT ALL " + query2;
     }
 
     private List<Map<String, String>> convertResultSetToJsonApplicableFormat(ResultSet rs) {
-        List<Map<String, String>> resList = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> resList = new ArrayList<>();
         try {
             ResultSetMetaData rsMeta = rs.getMetaData();
             int columnCnt = rsMeta.getColumnCount();
-            List<String> columnNames = new ArrayList<String>();
+            List<String> columnNames = new ArrayList<>();
             for (int i = 1; i <= columnCnt; i++) {
                 columnNames.add(rsMeta.getColumnName(i).toUpperCase());
             }
 
             while (rs.next()) { // convert each object to a human readable JSON object
-                Map<String, String> currMap = new HashMap<String, String>();
+                Map<String, String> currMap = new HashMap<>();
                 for (int i = 1; i <= columnCnt; i++) {
                     currMap.put(columnNames.get(i - 1), rs.getString(i));
                 }
