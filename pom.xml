@@ -13,6 +13,7 @@
         <postgres.vesrsion>9.4.1209</postgres.vesrsion>
         <spring-version>4.3.2.RELEASE</spring-version>
         <spring-data-version>1.10.2.RELEASE</spring-data-version>
+        <json.version>20160810</json.version>
     </properties>
 
     <dependencies>
@@ -38,6 +39,12 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>${postgres.vesrsion}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>${json.version}</version>
         </dependency>
 
     </dependencies>

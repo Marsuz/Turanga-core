@@ -1,6 +1,7 @@
 package model.tasks;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import model.EntityWIthId;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,13 +13,9 @@ import javax.persistence.Id;
  */
 
 @Entity
-public class ExerciseTask implements Task {
+public class ExerciseTask extends EntityWIthId implements Task {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
     private String description;
-    @JsonIgnore
     private String exampleCorrectQuery;
     private String category;
 
@@ -29,14 +26,6 @@ public class ExerciseTask implements Task {
         this.description = description;
         this.exampleCorrectQuery = exampleCorrectQuery;
         this.category = category;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getDescription() {
