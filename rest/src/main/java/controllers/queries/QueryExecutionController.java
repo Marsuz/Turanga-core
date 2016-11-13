@@ -2,7 +2,7 @@ package controllers.queries;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import queries.QueryService;
+import services.queries.QueryService;
 import wrappers.QueryResult;
 
 import java.util.Map;
@@ -18,12 +18,12 @@ public class QueryExecutionController {
     @Autowired
     QueryService queryService;
 
-    @RequestMapping(value = "/exec", method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     public QueryResult executeQuery(@RequestBody Map<String, String> jsonBody) {
         return queryService.processQuery(jsonBody.get("query"));
     }
 
-    @RequestMapping(value = "/check/{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "/{id}", method = RequestMethod.POST)
     public QueryResult checkIfQueryIsCorrect(@RequestBody Map<String, String> jsonBody, @PathVariable Long id) {
         return queryService.processQuery(jsonBody.get("query"), id);
     }

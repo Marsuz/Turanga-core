@@ -1,24 +1,25 @@
-package tasks;
+package model.tasks;
 
-import common.EntityWithId;
+import model.categories.Category;
+import model.common.EntityWithId;
 
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 
-/**
- * Created by Marcin on 2016-08-30.
- */
 
 @Entity
 public class ExerciseTask extends EntityWithId implements Task {
 
     private String description;
     private String exampleCorrectQuery;
-    private String category;
+
+    @ManyToOne
+    private Category category;
 
     public ExerciseTask() {
     }
 
-    public ExerciseTask(String description, String exampleCorrectQuery, String category) {
+    public ExerciseTask(String description, String exampleCorrectQuery, Category category) {
         this.description = description;
         this.exampleCorrectQuery = exampleCorrectQuery;
         this.category = category;
@@ -40,11 +41,14 @@ public class ExerciseTask extends EntityWithId implements Task {
         this.exampleCorrectQuery = exampleCorrectQuery;
     }
 
-    public String getCategory() {
+    @Override
+    public Category getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(Category category) {
         this.category = category;
     }
+
+    public boolean isOverdue() { return false; }
 }

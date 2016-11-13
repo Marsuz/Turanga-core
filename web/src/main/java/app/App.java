@@ -14,8 +14,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  */
 
 @SpringBootApplication
-@EntityScan(basePackages = { "common", "stubs", "tasks", "wrappers" })
-@ComponentScan(basePackages = {"app", "repositories", "utils", "stubs", "tasks", "wrappers", "controllers", "services", "queries"})
+@EntityScan(basePackages = {"model", "wrappers"})
+@ComponentScan(basePackages = {"app", "model", "repositories", "utils", "services", "wrappers", "controllers"})
 @EnableJpaRepositories(basePackages = {"repositories"})
 public class App {
 

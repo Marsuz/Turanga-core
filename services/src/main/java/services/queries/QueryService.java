@@ -1,7 +1,7 @@
-package queries;
+package services.queries;
 
-import tasks.ExerciseTaskService;
-import tasks.Task;
+import services.tasks.ExerciseTaskService;
+import model.tasks.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,7 +73,7 @@ public class QueryService {
     }
 
     private boolean checkIfQueryOutputMatchesRequirements(String query, Long taskId) {
-        Task chosenTask = exerciseTaskService.getExerciseTyskById(taskId);
+        Task chosenTask = exerciseTaskService.getExerciseTaskById(taskId);
         String checkingQuery = buildResultsComparingQuery(query, chosenTask.getExampleCorrectQuery());
         QueryResult diff = processQuery(checkingQuery);
         return "".equals(diff.getErrorMessage()) && diff.getResults().size() == 0;
