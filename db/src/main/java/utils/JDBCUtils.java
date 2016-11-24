@@ -2,6 +2,7 @@ package utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -16,8 +17,8 @@ import java.util.Properties;
 public class JDBCUtils {
     private static String JDBC_DRIVER;
     private static String DB_URL;
-    private static String user;
-    private static String password;
+    private static String USER;
+    private static String PASSWORD;
 
     final static Logger logger = LoggerFactory.getLogger(JDBCUtils.class);
 
@@ -30,8 +31,8 @@ public class JDBCUtils {
 
             JDBC_DRIVER = properties.getProperty("jdbc_driver");
             DB_URL = properties.getProperty("db_url");
-            user = properties.getProperty("db_user");
-            password = properties.getProperty("db_password");
+            USER = properties.getProperty("db_user");
+            PASSWORD = properties.getProperty("db_password");
         } catch (IOException ex) {
             logger.info("Could not read properties file for jdbc initialization");
             System.exit(-1);
@@ -47,9 +48,32 @@ public class JDBCUtils {
     }
 
     public static Connection getDBConnection() {
+        return getDBConnection(JDBC_DRIVER, DB_URL, USER, PASSWORD);
+    }
 
+    public static Connection getDBConnection(String jdbcDriverShortName, String dbUrl, String user, String password) {
+        String jdbcDriver = null;
+        Properties properties = new Properties();
+        FileInputStream input = null;
         try {
-            Class.forName(JDBC_DRIVER);
+            input = new FileInputStream("db/src/main/resources/dbdrivers.properties");
+            properties.load(input);
+            jdbcDriver = properties.getProperty(jdbcDriverShortName);
+        } catch (IOException ex) {
+            logger.info("Could not read properties file for jdbc initialization");
+        } finally {
+            try {
+                if (input != null) {
+                    input.close();
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        Assert.notNull(jdbcDriver);
+        try {
+            Class.forName(jdbcDriver);
         } catch (ClassNotFoundException e) {
             logger.info("JDBC driver not found");
         }
@@ -57,7 +81,7 @@ public class JDBCUtils {
         Connection connection = null;
 
         try {
-            connection = DriverManager.getConnection(DB_URL, user, password);
+            connection = DriverManager.getConnection(dbUrl, user, password);
         } catch (SQLException e) {
             logger.info("Could not establish connection with database");
         }

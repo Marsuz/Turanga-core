@@ -2,6 +2,7 @@ package model.categories;
 
 import model.common.EntityWithId;
 import javax.persistence.Entity;
+import java.util.Set;
 
 @Entity
 public class Category extends EntityWithId {

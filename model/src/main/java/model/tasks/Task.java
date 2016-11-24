@@ -2,9 +2,7 @@ package model.tasks;
 
 import model.categories.Category;
 
-/**
- * Created by Marcin on 2016-08-30.
- */
+
 public interface Task {
 
     public String getDescription();

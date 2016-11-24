@@ -1,5 +1,8 @@
 package services.queries;
 
+import services.queries.diff.DiffStrategy;
+import services.queries.diff.DiffStrategyFactory;
+import services.queries.diff.PostgreSQLStrategy;
 import services.tasks.ExerciseTaskService;
 import model.tasks.Task;
 import org.slf4j.Logger;
@@ -16,9 +19,6 @@ import java.util.Map;
 
 import static utils.JDBCUtils.getDBConnection;
 
-/**
- * Created by Marcin on 2016-08-20.
- */
 
 @Service
 public class QueryService {
@@ -28,12 +28,26 @@ public class QueryService {
     @Autowired
     ExerciseTaskService exerciseTaskService;
 
+    @Autowired
+    DiffStrategyFactory diffStrategyFactory;
+
+    DiffStrategy strategy = new PostgreSQLStrategy();
+
     public QueryResult processQuery(String query) {
         return processQuery(query, null);
     }
 
     public QueryResult processQuery(String query, Long taskId) {
-        Connection connection = getDBConnection();
+        return processQuery(query, taskId, null, null, null, null);
+    }
+
+    public QueryResult processQuery(String query, Long taskId, String jdbcDriverId, String dbUrl, String user, String password) {
+        Connection connection = null;
+        if (jdbcDriverId == null || dbUrl == null || user == null || password == null) {
+            connection = getDBConnection();
+        } else {
+            connection = getDBConnection(jdbcDriverId, dbUrl, user, password);
+        }
         Statement statement = null;
         List<Map<String, String>> results = null;
 
@@ -72,15 +86,16 @@ public class QueryService {
         }
     }
 
+
     private boolean checkIfQueryOutputMatchesRequirements(String query, Long taskId) {
         Task chosenTask = exerciseTaskService.getExerciseTaskById(taskId);
-        String checkingQuery = buildResultsComparingQuery(query, chosenTask.getExampleCorrectQuery());
+        String checkingQuery = strategy.buildResultsComparingQuery(query, chosenTask.getExampleCorrectQuery());
         QueryResult diff = processQuery(checkingQuery);
         return "".equals(diff.getErrorMessage()) && diff.getResults().size() == 0;
     }
 
-    private String buildResultsComparingQuery(String query1, String query2) {
-        return query1 + " EXCEPT ALL " + query2;
+    private void updateStrategy(String dbEngineShortName) {
+        strategy = diffStrategyFactory.createDiffStrategy(dbEngineShortName);
     }
 
     private List<Map<String, String>> convertResultSetToJsonApplicableFormat(ResultSet rs) {
