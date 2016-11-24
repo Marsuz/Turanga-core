@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Created by Marcin on 2016-08-20.
@@ -45,6 +45,29 @@ public class JDBCUtils {
                 ex.printStackTrace();
             }
         }
+    }
+
+    public static Set<String> getDBNames() {
+        Properties properties = new Properties();
+        Set<String> dbNames = new HashSet<>();
+        FileInputStream input = null;
+        try {
+            input = new FileInputStream("db/src/main/resources/dbdrivers.properties");
+            properties.load(input);
+            dbNames = properties.stringPropertyNames();
+        } catch (IOException ex) {
+            logger.info("Could not read properties file for jdbc initialization");
+        } finally {
+            try {
+                if (input != null) {
+                    input.close();
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        return dbNames;
     }
 
     public static Connection getDBConnection() {

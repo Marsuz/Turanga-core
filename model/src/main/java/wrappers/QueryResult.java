@@ -3,9 +3,7 @@ package wrappers;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by Marcin on 2016-09-03.
- */
+
 public class QueryResult {
 
     private Boolean correct;

@@ -21,6 +21,7 @@
         <postgres.vesrsion>9.4.1209</postgres.vesrsion>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
+        <junit.version>4.11</junit.version>
     </properties>
 
     <dependencyManagement>
@@ -38,6 +39,12 @@
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
                 <version>${postgres.vesrsion}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
             </dependency>
 
         </dependencies>

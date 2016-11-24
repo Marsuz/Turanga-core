@@ -1,14 +1,13 @@
 package services.queries;
 
-import services.queries.diff.DiffStrategy;
-import services.queries.diff.DiffStrategyFactory;
-import services.queries.diff.PostgreSQLStrategy;
-import services.tasks.ExerciseTaskService;
-import model.tasks.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import services.queries.diff.DiffStrategy;
+import services.queries.diff.DiffStrategyFactory;
+import services.queries.diff.PostgreSQLStrategy;
+import services.tasks.ExerciseTaskService;
 import wrappers.QueryResult;
 
 import java.sql.*;
@@ -37,34 +36,27 @@ public class QueryService {
         return processQuery(query, null);
     }
 
-    public QueryResult processQuery(String query, Long taskId) {
-        return processQuery(query, taskId, null, null, null, null);
+    public QueryResult processQuery(String query, String correctQuery) {
+        return processQuery(query, correctQuery, null, null, null, null);
     }
 
-    public QueryResult processQuery(String query, Long taskId, String jdbcDriverId, String dbUrl, String user, String password) {
+    public QueryResult processQuery(String query, String correctQuery, String dbName, String dbUrl, String user, String password) {
         Connection connection = null;
-        if (jdbcDriverId == null || dbUrl == null || user == null || password == null) {
+        if (dbName == null || dbUrl == null || user == null || password == null) {
             connection = getDBConnection();
         } else {
-            connection = getDBConnection(jdbcDriverId, dbUrl, user, password);
+            connection = getDBConnection(dbName, dbUrl, user, password);
+            updateStrategy(dbName);
         }
         Statement statement = null;
-        List<Map<String, String>> results = null;
-
+        List<Map<String, String>> results = new ArrayList<>();
         try {
             statement = connection.createStatement();
-
-        } catch (SQLException e) {
-            logger.info("DB connection could not be established");
-            e.printStackTrace();
-        }
-
-        try {
             ResultSet resultSet = statement.executeQuery(query);
             results = convertResultSetToJsonApplicableFormat(resultSet);
             boolean ifCorrect = true;
-            if (taskId != null) {
-                ifCorrect = checkIfQueryOutputMatchesRequirements(query, taskId);
+            if (correctQuery != null) {
+                ifCorrect = checkIfQueryOutputMatchesRequirements(query, correctQuery);
             }
             return new QueryResult(ifCorrect, results, "");
         } catch (SQLException e) {
@@ -87,9 +79,8 @@ public class QueryService {
     }
 
 
-    private boolean checkIfQueryOutputMatchesRequirements(String query, Long taskId) {
-        Task chosenTask = exerciseTaskService.getExerciseTaskById(taskId);
-        String checkingQuery = strategy.buildResultsComparingQuery(query, chosenTask.getExampleCorrectQuery());
+    private boolean checkIfQueryOutputMatchesRequirements(String query, String correctQuery) {
+        String checkingQuery = strategy.buildResultsComparingQuery(query, correctQuery);
         QueryResult diff = processQuery(checkingQuery);
         return "".equals(diff.getErrorMessage()) && diff.getResults().size() == 0;
     }
