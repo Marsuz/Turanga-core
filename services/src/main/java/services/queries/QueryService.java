@@ -8,6 +8,8 @@ import services.queries.diff.DiffStrategy;
 import services.queries.diff.DiffStrategyFactory;
 import services.queries.diff.PostgreSQLStrategy;
 import services.tasks.ExerciseTaskService;
+import wrappers.DBDetails;
+import wrappers.QueryRequest;
 import wrappers.QueryResult;
 
 import java.sql.*;
@@ -25,38 +27,28 @@ public class QueryService {
     private final static Logger logger = LoggerFactory.getLogger(QueryService.class);
 
     @Autowired
-    ExerciseTaskService exerciseTaskService;
-
-    @Autowired
     DiffStrategyFactory diffStrategyFactory;
 
     DiffStrategy strategy = new PostgreSQLStrategy();
 
-    public QueryResult processQuery(String query) {
-        return processQuery(query, null);
-    }
-
-    public QueryResult processQuery(String query, String correctQuery) {
-        return processQuery(query, correctQuery, null, null, null, null);
-    }
-
-    public QueryResult processQuery(String query, String correctQuery, String dbName, String dbUrl, String user, String password) {
+    public QueryResult processQuery(QueryRequest queryRequest) {
         Connection connection = null;
-        if (dbName == null || dbUrl == null || user == null || password == null) {
+        DBDetails dbDetails = queryRequest.getDbDetails();
+        if (dbDetails == null || dbDetails.getDb() == null || dbDetails.getUrl() == null || dbDetails.getUser() == null || dbDetails.getPassword() == null) {
             connection = getDBConnection();
         } else {
-            connection = getDBConnection(dbName, dbUrl, user, password);
-            updateStrategy(dbName);
+            connection = getDBConnection(dbDetails);
+            updateStrategy(dbDetails.getDb());
         }
         Statement statement = null;
         List<Map<String, String>> results = new ArrayList<>();
         try {
             statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
+            ResultSet resultSet = statement.executeQuery(queryRequest.getQuery());
             results = convertResultSetToJsonApplicableFormat(resultSet);
             boolean ifCorrect = true;
-            if (correctQuery != null) {
-                ifCorrect = checkIfQueryOutputMatchesRequirements(query, correctQuery);
+            if (queryRequest.getCorrectQuery() != null) {
+                ifCorrect = checkIfQueryOutputMatchesRequirements(queryRequest.getQuery(), queryRequest.getCorrectQuery());
             }
             return new QueryResult(ifCorrect, results, "");
         } catch (SQLException e) {
@@ -81,7 +73,7 @@ public class QueryService {
 
     private boolean checkIfQueryOutputMatchesRequirements(String query, String correctQuery) {
         String checkingQuery = strategy.buildResultsComparingQuery(query, correctQuery);
-        QueryResult diff = processQuery(checkingQuery);
+        QueryResult diff = processQuery(new QueryRequest(checkingQuery, null, null));
         return "".equals(diff.getErrorMessage()) && diff.getResults().size() == 0;
     }
 
@@ -99,7 +91,7 @@ public class QueryService {
                 columnNames.add(rsMeta.getColumnName(i).toUpperCase());
             }
 
-            while (rs.next()) { // convert each object to a human readable JSON object
+            while (rs.next()) {
                 Map<String, String> currMap = new HashMap<>();
                 for (int i = 1; i <= columnCnt; i++) {
                     currMap.put(columnNames.get(i - 1), rs.getString(i));
