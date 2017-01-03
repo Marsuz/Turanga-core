@@ -1,8 +1,5 @@
 package wrappers;
 
-/**
- * Created by mzajda on 03/01/2017.
- */
 public class QueryRequest {
 
     private String query;

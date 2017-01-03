@@ -13,11 +13,8 @@ import java.sql.SQLException;
 import java.util.*;
 
 public class JDBCUtils {
-    private static String JDBC_DRIVER;
-    private static String DB_NAME;
-    private static String DB_URL;
-    private static String USER;
-    private static String PASSWORD;
+
+    private static String DB_NAME = "POSTGRESQL";
     private static DBDetails DB_DETAILS;
 
     final static Logger logger = LoggerFactory.getLogger(JDBCUtils.class);
@@ -29,11 +26,10 @@ public class JDBCUtils {
             input = new FileInputStream("db/src/main/resources/dbdrivers.properties");
             properties.load(input);
 
-            DB_NAME = "POSTGRESQL";
-            JDBC_DRIVER = properties.getProperty(DB_NAME);
-            DB_URL = properties.getProperty("db_url");
-            USER = properties.getProperty("db_user");
-            PASSWORD = properties.getProperty("db_password");
+            String JDBC_DRIVER = properties.getProperty(DB_NAME);
+            String DB_URL = properties.getProperty("db_url");
+            String USER = properties.getProperty("db_user");
+            String PASSWORD = properties.getProperty("db_password");
             DB_DETAILS = new DBDetails(DB_NAME, DB_URL, USER, PASSWORD);
         } catch (IOException ex) {
             logger.info("Could not read properties file for jdbc initialization");
@@ -72,11 +68,11 @@ public class JDBCUtils {
         return dbNames;
     }
 
-    public static Connection getDBConnection() {
+    public static Connection getDBConnection() throws SQLException {
         return getDBConnection(DB_DETAILS);
     }
 
-    public static Connection getDBConnection(DBDetails dbDetails) {
+    public static Connection getDBConnection(DBDetails dbDetails) throws SQLException{
         String jdbcDriver = null;
         Properties properties = new Properties();
         FileInputStream input = null;
@@ -109,6 +105,7 @@ public class JDBCUtils {
             connection = DriverManager.getConnection(dbDetails.getUrl(), dbDetails.getUser(), dbDetails.getPassword());
         } catch (SQLException e) {
             logger.info("Could not establish connection with database");
+            throw e;
         }
 
         return connection;

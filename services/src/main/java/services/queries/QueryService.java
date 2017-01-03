@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import services.queries.diff.DiffStrategy;
 import services.queries.diff.DiffStrategyFactory;
 import services.queries.diff.PostgreSQLStrategy;
-import services.tasks.ExerciseTaskService;
 import wrappers.DBDetails;
 import wrappers.QueryRequest;
 import wrappers.QueryResult;
@@ -27,21 +26,27 @@ public class QueryService {
     private final static Logger logger = LoggerFactory.getLogger(QueryService.class);
 
     @Autowired
-    DiffStrategyFactory diffStrategyFactory;
+    private DiffStrategyFactory diffStrategyFactory;
 
     DiffStrategy strategy = new PostgreSQLStrategy();
 
     public QueryResult processQuery(QueryRequest queryRequest) {
+
+        List<Map<String, String>> results = new ArrayList<>();
         Connection connection = null;
         DBDetails dbDetails = queryRequest.getDbDetails();
-        if (dbDetails == null || dbDetails.getDb() == null || dbDetails.getUrl() == null || dbDetails.getUser() == null || dbDetails.getPassword() == null) {
-            connection = getDBConnection();
-        } else {
-            connection = getDBConnection(dbDetails);
-            updateStrategy(dbDetails.getDb());
+        try {
+            if (dbDetails == null || dbDetails.getDb() == null || dbDetails.getUrl() == null || dbDetails.getUser() == null || dbDetails.getPassword() == null) {
+                connection = getDBConnection();
+            } else {
+                connection = getDBConnection(dbDetails);
+                updateStrategy(dbDetails.getDb());
+            }
+        } catch (SQLException e) {
+            return new QueryResult(false, results, e.getMessage());
         }
+
         Statement statement = null;
-        List<Map<String, String>> results = new ArrayList<>();
         try {
             statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(queryRequest.getQuery());

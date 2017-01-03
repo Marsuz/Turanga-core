@@ -11,19 +11,18 @@ import java.util.Set;
 
 
 @RestController
-//@CrossOrigin(origins="http://localhost:3000")
-@RequestMapping(value = "/query", consumes="application/json")
+//@CrossOrigin(origins="http://localhost:8081")
 public class QueryExecutionController {
 
     @Autowired
     QueryService queryService;
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value = "/query", consumes="application/json", method = RequestMethod.POST)
     public QueryResult executeQuery(@RequestBody QueryRequest queryRequest) {
         return queryService.processQuery(queryRequest);
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = "/dbs", method = RequestMethod.GET)
     public Set<String> getDBNames() {
         return JDBCUtils.getDBNames();
     }

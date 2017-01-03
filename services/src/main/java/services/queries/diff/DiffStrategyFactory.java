@@ -5,6 +5,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class DiffStrategyFactory {
 
+    public DiffStrategyFactory() {
+    }
+
     public DiffStrategy createDiffStrategy(String dbShortName) {
         switch (dbShortName) {
             case "POSTGRESQL":

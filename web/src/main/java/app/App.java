@@ -7,16 +7,10 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-
-/**
- * Created by Marcin on 2016-08-20.
- */
 
 @SpringBootApplication
-@EntityScan(basePackages = {"model", "wrappers"})
-@ComponentScan(basePackages = {"app", "model", "repositories", "utils", "services", "wrappers", "controllers"})
-@EnableJpaRepositories(basePackages = {"repositories"})
+@EntityScan(basePackages = {"wrappers"})
+@ComponentScan(basePackages = {"app", "utils", "services", "wrappers", "controllers"})
 public class App {
 
     @Bean
