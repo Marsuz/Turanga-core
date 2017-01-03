@@ -23,7 +23,7 @@ public class JDBCUtils {
         Properties properties = new Properties();
         FileInputStream input = null;
         try {
-            input = new FileInputStream("db/src/main/resources/dbdrivers.properties");
+            input = new FileInputStream("db/src/main/resources/defconfig.properties");
             properties.load(input);
 
             String JDBC_DRIVER = properties.getProperty(DB_NAME);
