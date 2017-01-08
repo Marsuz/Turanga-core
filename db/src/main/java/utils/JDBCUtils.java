@@ -105,6 +105,7 @@ public class JDBCUtils {
             connection = DriverManager.getConnection(dbDetails.getUrl(), dbDetails.getUser(), dbDetails.getPassword());
         } catch (SQLException e) {
             logger.info("Could not establish connection with database");
+            e.printStackTrace();
             throw e;
         }
 

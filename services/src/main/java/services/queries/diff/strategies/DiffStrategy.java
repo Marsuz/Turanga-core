@@ -1,4 +1,4 @@
-package services.queries.diff;
+package services.queries.diff.strategies;
 
 
 public interface DiffStrategy {

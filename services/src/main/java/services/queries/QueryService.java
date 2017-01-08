@@ -4,9 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import services.queries.diff.DiffStrategy;
-import services.queries.diff.DiffStrategyFactory;
-import services.queries.diff.PostgreSQLStrategy;
+import services.queries.diff.strategies.DiffStrategy;
+import services.queries.diff.factories.DiffStrategyFactory;
+import services.queries.diff.strategies.PostgreSQLStrategy;
 import wrappers.DBDetails;
 import wrappers.QueryRequest;
 import wrappers.QueryResult;
@@ -50,7 +50,7 @@ public class QueryService {
         Statement statement = null;
         try {
             statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(queryRequest.getQuery());
+                ResultSet resultSet = statement.executeQuery(queryRequest.getQuery());
             results = convertResultSetToJsonApplicableFormat(resultSet);
             boolean ifCorrect = true;
             if (!isQueryAcceptable(queryRequest.getQuery(), queryRequest.getForbiddenWords(), queryRequest.getRequiredWords())) {
@@ -59,6 +59,7 @@ public class QueryService {
             } else if (queryRequest.getCorrectQuery() != null) {
                 ifCorrect = isQueryOutputCorrect(queryRequest.getQuery(), queryRequest.getCorrectQuery());
             }
+            logger.info("Query processed");
             return new QueryResult(ifCorrect, results, errorMessage);
         } catch (SQLException e) {
             logger.info("Error occured executing query");

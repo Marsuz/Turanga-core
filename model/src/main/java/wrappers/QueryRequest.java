@@ -4,11 +4,11 @@ import java.util.List;
 
 public class QueryRequest {
 
-    private String query;
-    private String correctQuery;
-    private List<String> forbiddenWords;
-    private List<String> requiredWords;
-    private DBDetails dbDetails;
+        private String query;
+        private String correctQuery;
+        private List<String> forbiddenWords;
+        private List<String> requiredWords;
+        private DBDetails dbDetails;
 
     public QueryRequest() {
     }

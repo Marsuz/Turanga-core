@@ -22,6 +22,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
         <junit.version>4.11</junit.version>
+        <mysql-connector-java.version>6.0.5</mysql-connector-java.version>
     </properties>
 
     <dependencyManagement>
@@ -39,6 +40,12 @@
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
                 <version>${postgres.vesrsion}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql-connector-java.version}</version>
             </dependency>
 
             <dependency>
