@@ -81,7 +81,7 @@ public class QueryService {
     }
 
     private String removeUnwantedPartsOfQuery(String query) {
-        return query.replace("\n", " ").replace("\r", " ").split(";")[0];
+        return query.replace("\n", " ").replace("\r", " ").split("\\s*;\\s*")[0];
     }
 
 
@@ -96,7 +96,7 @@ public class QueryService {
     }
 
     private boolean isQueryAcceptable(String query, List<String> forbiddenWords, List<String> requiredWords) {
-        String[] words = removeUnwantedPartsOfQuery(query).split(" ");
+        String[] words = removeUnwantedPartsOfQuery(query).split("\\s+|\\s*,\\s*");
 
         if (forbiddenWords != null) {
             for (String forbWord : forbiddenWords) {
