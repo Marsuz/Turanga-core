@@ -80,13 +80,13 @@ public class QueryService {
         }
     }
 
-    private String trimQuery(String query) {
-        return query.split(";")[0];
+    private String removeUnwantedPartsOfQuery(String query) {
+        return query.replace("\n", " ").replace("\r", " ").split(";")[0];
     }
 
 
     private boolean isQueryOutputCorrect(String query, String correctQuery) {
-        String checkingQuery = strategy.buildResultsComparingQuery(trimQuery(query), correctQuery);
+        String checkingQuery = strategy.buildResultsComparingQuery(removeUnwantedPartsOfQuery(query), correctQuery);
         QueryResult diff = processQuery(new QueryRequest(checkingQuery, null, new ArrayList<>(), new ArrayList<>(), null));
         return "".equals(diff.getErrorMessage()) && diff.getResults().size() == 0;
     }
@@ -96,7 +96,7 @@ public class QueryService {
     }
 
     private boolean isQueryAcceptable(String query, List<String> forbiddenWords, List<String> requiredWords) {
-        String[] words = trimQuery(query).split(" ");
+        String[] words = removeUnwantedPartsOfQuery(query).split(" ");
 
         if (forbiddenWords != null) {
             for (String forbWord : forbiddenWords) {
