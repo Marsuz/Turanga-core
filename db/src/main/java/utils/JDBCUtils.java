@@ -23,7 +23,7 @@ public class JDBCUtils {
         Properties properties = new Properties();
         FileInputStream input = null;
         try {
-            input = new FileInputStream("db/src/main/resources/defconfig.properties");
+            input = new FileInputStream("../db/src/main/resources/defconfig.properties");
             properties.load(input);
 
             String JDBC_DRIVER = properties.getProperty(DB_NAME);
@@ -50,7 +50,7 @@ public class JDBCUtils {
         Set<String> dbNames = new HashSet<>();
         FileInputStream input = null;
         try {
-            input = new FileInputStream("db/src/main/resources/dbdrivers.properties");
+            input = new FileInputStream("../db/src/main/resources/dbdrivers.properties");
             properties.load(input);
             dbNames = properties.stringPropertyNames();
         } catch (IOException ex) {
@@ -77,7 +77,7 @@ public class JDBCUtils {
         Properties properties = new Properties();
         FileInputStream input = null;
         try {
-            input = new FileInputStream("db/src/main/resources/dbdrivers.properties");
+            input = new FileInputStream("../db/src/main/resources/dbdrivers.properties");
             properties.load(input);
             jdbcDriver = properties.getProperty(dbDetails.getDb());
         } catch (IOException ex) {
