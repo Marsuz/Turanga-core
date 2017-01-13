@@ -86,7 +86,7 @@ public class QueryService {
 
 
     private boolean isQueryOutputCorrect(String query, String correctQuery) {
-        String checkingQuery = strategy.buildResultsComparingQuery(removeUnwantedPartsOfQuery(query), correctQuery);
+        String checkingQuery = strategy.buildResultsComparingQuery(removeUnwantedPartsOfQuery(query), removeUnwantedPartsOfQuery(correctQuery));
         QueryResult diff = processQuery(new QueryRequest(checkingQuery, null, new ArrayList<>(), new ArrayList<>(), null));
         return "".equals(diff.getErrorMessage()) && diff.getResults().size() == 0;
     }
