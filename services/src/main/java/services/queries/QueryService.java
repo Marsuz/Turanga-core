@@ -57,7 +57,7 @@ public class QueryService {
                 errorMessage = "Query is not acceptable as it does not match the requirements for words usage";
                 ifCorrect = false;
             } else if (queryRequest.getCorrectQuery() != null) {
-                ifCorrect = isQueryOutputCorrect(queryRequest.getQuery(), queryRequest.getCorrectQuery());
+                ifCorrect = isQueryOutputCorrect(queryRequest.getQuery(), queryRequest.getCorrectQuery(), dbDetails);
             }
             logger.info("Query processed");
             return new QueryResult(ifCorrect, results, errorMessage);
@@ -85,9 +85,9 @@ public class QueryService {
     }
 
 
-    private boolean isQueryOutputCorrect(String query, String correctQuery) {
+    private boolean isQueryOutputCorrect(String query, String correctQuery, DBDetails dbDetails) {
         String checkingQuery = strategy.buildResultsComparingQuery(removeUnwantedPartsOfQuery(query), removeUnwantedPartsOfQuery(correctQuery));
-        QueryResult diff = processQuery(new QueryRequest(checkingQuery, null, new ArrayList<>(), new ArrayList<>(), null));
+        QueryResult diff = processQuery(new QueryRequest(checkingQuery, null, new ArrayList<>(), new ArrayList<>(), dbDetails));
         return "".equals(diff.getErrorMessage()) && diff.getResults().size() == 0;
     }
 
